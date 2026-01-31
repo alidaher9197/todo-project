@@ -21,5 +21,6 @@
             "result"=>"error",
             "error"=>"connection to db failed"
         ]);
+        exit;
     }
 ?>
