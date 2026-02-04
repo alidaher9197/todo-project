@@ -20,5 +20,10 @@ $last_name  = trim($_POST["last_name"] ?? "");
 $username   = trim($_POST["username"] ?? "");
 $password   = trim($_POST["password"] ?? "");
 $image_path_db=add_image($_FILES["image"]);
+Users::test_first_name($first_name);
+Users::test_last_name($last_name);
+Users::test_username($username);
+Users::test_password($password);
+
 Users::sign_up($pdo,$first_name,$last_name,$password,$username,$image_path_db);
 ?>

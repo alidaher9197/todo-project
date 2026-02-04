@@ -69,13 +69,10 @@ try {
 
 } catch (PDOException $e) {
 
-    if ($e->getCode() == 23000) {
-        http_response_code(409);
-        echo json_encode(["error" => "Username already exists"]);
-    } else {
+    
         http_response_code(500);
         echo json_encode(["error" => "Database error"]);
-    }
+    
 }
 }
 
@@ -156,7 +153,50 @@ catch(PDOException $e){
     ]);
 }
 }
-
+public static function test_first_name($value){
+    if(strlen($value)>50){
+        http_response_code(400);
+        echo json_encode([
+        "result" => "error",
+        "error" => "firstname must be shorter than 50 char"
+    ]);
+    exit;
+    }
+    
+}
+public static function test_last_name($value){
+    if(strlen($value)>50){
+        http_response_code(400);
+        echo json_encode([
+        "result" => "error",
+        "error" => "lastname must be shorter than 50 char"
+    ]);
+    exit;
+    }
+    
+}
+public static function test_username($value){
+    if(strlen($value)>50 ||strlen($value)<3 ){
+        http_response_code(400);
+        echo json_encode([
+        "result" => "error",
+        "error" => "username must be between 3 and 50 char"
+    ]);
+    exit;
+    }
+    
+}
+public static function test_password($value){
+    if(strlen($value)>50 ||strlen($value)<3 ){
+        http_response_code(400);
+        echo json_encode([
+        "result" => "error",
+        "error" => "password must be between 3 and 50 char"
+    ]);
+    exit;
+    }
+    
+}
 }
 
 

@@ -13,6 +13,9 @@ required_fields($data,"username","password");
 
 $username=trim($data["username"]);
 $password=trim($data["password"]);
+Users::test_username($username);
+Users::test_password($password);
+
 Users::sign_in($pdo,$username,$password);
 // $sql = "SELECT id, username, `password`,profile_url
 //         FROM users
