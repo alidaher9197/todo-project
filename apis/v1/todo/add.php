@@ -15,8 +15,8 @@ required_fields($_POST,"title","description");
 /* validate text fields */
 $title = trim($_POST["title"] ?? "");
 $description  = trim($_POST["description"] ?? "");
-Todo::test_title($title);
-Todo::test_description($description);
+Todos::test_title($title);
+Todos::test_description($description);
 if(isset($_FILES["image"])){
 $image_path_db=add_image($_FILES["image"]);
 }else{

@@ -9,7 +9,7 @@ require_once("../helpers/hash_password/password.php");
 require_once("../helpers/functions.php");
 require_once("../helpers/Todos.php");
 
-$user_id=require_auth();
+$user_id=require_auth($pdo);
 required_fields($_POST,"todo_id");
 $todo=Todos::view_todo_by_id($pdo,$_POST["todo_id"]);
 if($todo["user_id"]==$user_id){
@@ -36,7 +36,7 @@ foreach ($params as $key => $value) {
 $sql = "UPDATE todos SET " . implode(", ", $set) . " WHERE id = :id ";
 $params[":id"] = $_POST["todo_id"];
 $stmt = $pdo->prepare($sql);
-$stmt->execute($params);
+try{$stmt->execute($params);
 if ($stmt->rowCount() === 0) {
     http_response_code(404);
     echo json_encode(["error" => "Todo not found or no changes"]);
@@ -48,7 +48,14 @@ if (isset($params["title"])) $response["new_title"] = $params["title"];
 if (isset($params["description"])) $response["new_description"] = $params["description"];
 if (isset($params["image_url"])) $response["new_image_url"] = $params["image_url"];
 
-echo json_encode($response);
+echo json_encode($response);}
+catch (PDOException $e) {
+    http_response_code(500);
+    echo json_encode([
+        "result" => "error",
+        "error" => "Database error"
+    ]);
+}
 }else{
     http_response_code(403);
         echo json_encode([

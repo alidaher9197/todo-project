@@ -11,9 +11,14 @@ is_valid_json($data);
 required_fields($data,"old_password","new_password");
 $old_password=$data["old_password"];
 $new_password=$data["new_password"];
+if($old_password==$new_password){
+    http_response_code(400);
+        echo json_encode(["error" => "old password as new"]);
+        exit;
+}
 Users::test_password($old_password);
 Users::test_password($new_password);
-$result=require_auth();
+$result=require_auth($pdo);
 Users::select_user($pdo,$result,$old_password);
 Users::edit_pass($pdo,$result,$new_password);
 ?>

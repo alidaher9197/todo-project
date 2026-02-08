@@ -71,7 +71,21 @@ try {
 
     
         http_response_code(500);
-        echo json_encode(["error" => "Database error"]);
+       
+    // Check if the error is a duplicate entry
+    if ($e->getCode() == 23000) {
+        // 23000 = integrity constraint violation (unique key)
+        echo json_encode([
+            "status" => "error",
+            "message" => "Username already exists"
+        ]);
+    } else {
+        // Other database errors
+        echo json_encode([
+            "status" => "error",
+            "message" => $e->getMessage()
+        ]);
+    }
     
 }
 }
@@ -154,48 +168,80 @@ catch(PDOException $e){
 }
 }
 public static function test_first_name($value){
-    if(strlen($value)>50){
+    if(strlen($value)>20 ||strlen($value)<3 ){
         http_response_code(400);
         echo json_encode([
         "result" => "error",
-        "error" => "firstname must be shorter than 50 char"
+        "error" => "first_name must be between 3 and 20 char"
     ]);
     exit;
     }
     
 }
 public static function test_last_name($value){
-    if(strlen($value)>50){
+    if(strlen($value)>20 ||strlen($value)<3 ){
         http_response_code(400);
         echo json_encode([
         "result" => "error",
-        "error" => "lastname must be shorter than 50 char"
+        "error" => "last_name must be between 3 and 20 char"
     ]);
     exit;
     }
     
 }
 public static function test_username($value){
-    if(strlen($value)>50 ||strlen($value)<3 ){
+    if(strlen($value)>20 ||strlen($value)<3 ){
         http_response_code(400);
         echo json_encode([
         "result" => "error",
-        "error" => "username must be between 3 and 50 char"
+        "error" => "username must be between 3 and 20 char"
     ]);
     exit;
     }
     
 }
 public static function test_password($value){
-    if(strlen($value)>50 ||strlen($value)<3 ){
+    if(strlen($value)>30 ||strlen($value)<6 ){
         http_response_code(400);
         echo json_encode([
         "result" => "error",
-        "error" => "password must be between 3 and 50 char"
+        "error" => "password must be between 6 and 30 char"
     ]);
     exit;
     }
     
+}
+public static function delete_user($pdo,$id){
+    $sql = "DELETE FROM users WHERE id = :id";
+    $statement = $pdo->prepare($sql);
+
+    try {
+        $statement->execute([
+            ":id" => $id
+        ]);
+
+        if ($statement->rowCount() === 0) {
+            http_response_code(404);
+            echo json_encode([
+                "result"  => "error",
+                "message" => "user not found"
+            ]);
+            exit;
+        }
+
+        http_response_code(200);
+        echo json_encode([
+            "result" => "deleted"
+        ]);
+        exit;
+
+    } catch (PDOException $e) {
+        http_response_code(500);
+        echo json_encode([
+            "error" => "Database error"
+        ]);
+        exit;
+    }
 }
 }
 

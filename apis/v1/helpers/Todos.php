@@ -108,22 +108,22 @@ public static function delete_todo_by_id($pdo,$id)
     }
 }
 public static function test_title($value){
-    if(strlen($value)>100){
+    if(strlen($value)>100 || strlen($value)<2){
         http_response_code(400);
         echo json_encode([
         "result" => "error",
-        "error" => "title must be less than 100 char"
+        "error" => "title must be between 2 and 100 char"
     ]);
     exit;
     }   
 }
 
 public static function test_description($value){
-    if(strlen($value)>250){
+    if(strlen($value)>255 || strlen($value)<2){
         http_response_code(400);
         echo json_encode([
         "result" => "error",
-        "error" => "description must be less than 250 char"
+        "error" => "description must be between 2 and 255 char"
     ]);
     exit;
     }   
