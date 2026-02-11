@@ -140,5 +140,12 @@ function isset_image($file){
     exit;
 }
 }
+function delete_image($url){
+    
+    
+    if(file_exists("../".$url)){
+        unlink("../".$url);            
+    }
+}
 
 ?>

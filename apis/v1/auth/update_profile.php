@@ -15,6 +15,10 @@ if (isset($_POST["username"]) && trim($_POST["username"]) !== "") {
 if(isset($_FILES["image"]) ){
 $image_path_db=add_image($_FILES["image"]);
 $params["profile_url"]=$image_path_db;
+$user=Users::select_user_by_id($pdo,$user_id);
+delete_image($user["profile_url"]);
+    
+    
 }       
 if (empty($params)) {
     http_response_code(400);
@@ -34,7 +38,7 @@ if ($stmt->rowCount() === 0) {
     echo json_encode(["error" => "user not found or no changes"]);
     exit;
 }
-$response = ["result" => "success", "user" => $user_id];
+$response = ["result" => "success", "user" => $user_id,"token" => MyJWT::generateToken($user_id)];
 
 if (isset($params["username"])) $response["new_username"] = $params["username"];
 if (isset($params["profile_url"])) $response["new_profile_url"] = $params["profile_url"];

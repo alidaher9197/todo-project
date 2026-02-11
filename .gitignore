@@ -1,3 +1,4 @@
 /.env
 /vendor/
 test_apis
+apis/v1/assets/

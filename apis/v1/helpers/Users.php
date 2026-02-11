@@ -1,5 +1,6 @@
 <?php
-abstract Class Users{
+require_once("functions.php");
+abstract class Users{
 public static function sign_in($pdo,$username,$password){
     $sql = "SELECT id, username, `password`,profile_url
         FROM users
@@ -75,6 +76,7 @@ try {
     // Check if the error is a duplicate entry
     if ($e->getCode() == 23000) {
         // 23000 = integrity constraint violation (unique key)
+        http_response_code(409);
         echo json_encode([
             "status" => "error",
             "message" => "Username already exists"
@@ -131,6 +133,7 @@ try {
     ]);
 }
 }
+
 public static function edit_pass($pdo,$id,$new_pass){
     $sql="UPDATE users set password=:password WHERE id=:id";
     $stmt = $pdo->prepare($sql);
@@ -212,6 +215,8 @@ public static function test_password($value){
     
 }
 public static function delete_user($pdo,$id){
+    $user=self::select_user_by_id($pdo,$id);
+    delete_image($user["profile_url"]);
     $sql = "DELETE FROM users WHERE id = :id";
     $statement = $pdo->prepare($sql);
 
@@ -243,6 +248,38 @@ public static function delete_user($pdo,$id){
         exit;
     }
 }
+public static function select_user_by_id($pdo,$id){
+    if (!is_numeric($id)) {
+    http_response_code(400);
+    echo json_encode([
+        "result" => "error",
+        "message" => "Invalid user ID"
+    ]);
+    exit;
+}
+     $sql="SELECT id, username, first_name,last_name,profile_url FROM users WHERE id=:id";
+    $stmt = $pdo->prepare($sql);
+    try{
+    $stmt->execute([
+    ":id"       => $id
+]);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
+if (!$user) {
+            http_response_code(404);
+            echo json_encode([
+                "result"  => "error",
+                "message" => "user not found"
+            ]);
+            exit;
+        }
+        return $user;
+}catch(PDOException $e){
+    http_response_code(500);
+        echo json_encode([
+            "error" => "Database error"
+        ]);
+        exit;
+}}
 }
 
 

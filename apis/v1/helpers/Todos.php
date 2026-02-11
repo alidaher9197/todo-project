@@ -1,4 +1,5 @@
 <?php
+require_once("functions.php");
 abstract Class Todos{
 public static function add_todo($pdo,$title,$description,$user_id,$image_path_db){
     /* insert into database */
@@ -33,12 +34,15 @@ try {
     }
 }
 }
-public static function view_todos($pdo){
-$sql="SELECT * FROM todos";
+public static function view_todos($pdo,$id){
+$sql="SELECT * FROM todos WHERE user_id=:id";
+$stmt = $pdo->prepare($sql);
 try{
-$statement = $pdo->query($sql);
+$stmt->execute([
+        ":id" => $id
+    ]);
 
-    $todos = $statement->fetchAll();
+    $todos = $stmt->fetchAll();
 
     http_response_code(200);
     echo json_encode([
@@ -74,8 +78,10 @@ $statement->execute([
         echo json_encode(["error" => "Database error"]);
 }
 }
-public static function delete_todo_by_id($pdo,$id)
+public static function delete_todo_by_id($pdo,$id,$user_id)
 {
+    $todo=self::view_todo_by_id($pdo,$id);
+    delete_image($todo["image_url"]);
     $sql = "DELETE FROM todos WHERE id = :id";
     $statement = $pdo->prepare($sql);
 
@@ -95,7 +101,8 @@ public static function delete_todo_by_id($pdo,$id)
 
         http_response_code(200);
         echo json_encode([
-            "result" => "deleted"
+            "result" => "deleted",
+        "token" => MyJWT::generateToken($user_id)
         ]);
         exit;
 

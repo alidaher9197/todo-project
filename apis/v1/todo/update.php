@@ -21,7 +21,9 @@ if(isset($_POST["description"]) &&  trim($_POST["description"]) !== ""){
 $params["description"]=$_POST["description"];
 }
 if(isset($_FILES["image"]) ){
+    
 $image_path_db=add_image($_FILES["image"]);
+delete_image($todo["image_url"]);
 $params["image_url"]=$image_path_db;
 }
 if (empty($params)) {
@@ -42,7 +44,7 @@ if ($stmt->rowCount() === 0) {
     echo json_encode(["error" => "Todo not found or no changes"]);
     exit;
 }
-$response = ["result" => "success", "todo" => $_POST["todo_id"]];
+$response = ["result" => "success", "todo" => $_POST["todo_id"],"token" => MyJWT::generateToken($user_id)];
 
 if (isset($params["title"])) $response["new_title"] = $params["title"];
 if (isset($params["description"])) $response["new_description"] = $params["description"];

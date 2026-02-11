@@ -9,11 +9,11 @@ require_once("../helpers/hash_password/password.php");
 require_once("../helpers/functions.php");
 require_once("../helpers/Todos.php");
 
-$user_id=require_auth();
+$user_id=require_auth($pdo);
 required_fields($_GET,"todo_id");
 $todo=Todos::view_todo_by_id($pdo,$_GET["todo_id"]);
 if($todo["user_id"]==$user_id){
-Todos::delete_todo_by_id($pdo,$_GET["todo_id"]);    
+Todos::delete_todo_by_id($pdo,$_GET["todo_id"],$user_id);    
 }else{
     http_response_code(403);
         echo json_encode([

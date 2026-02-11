@@ -9,6 +9,6 @@ require_once("../helpers/hash_password/password.php");
 require_once("../helpers/functions.php");
 require_once("../helpers/Todos.php");
 
-$user_id=require_auth();
-Todos::view_todos($pdo);
+$user_id=require_auth($pdo);
+Todos::view_todos($pdo,$user_id);
 ?>

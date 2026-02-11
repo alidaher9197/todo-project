@@ -9,7 +9,7 @@ require_once("../helpers/hash_password/password.php");
 require_once("../helpers/functions.php");
 require_once("../helpers/Todos.php");
 
-$user_id=require_auth();
+$user_id=require_auth($pdo);
 required_fields($_POST,"title","description");
 
 /* validate text fields */
